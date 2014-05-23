@@ -5,6 +5,7 @@
 
 Servo servoP, servoB;
 int posP, posB;
+long randNumber;
               
 // 眼皮: 
 //   - 1000: 閉眼
@@ -19,6 +20,8 @@ void setup()
 { 
   Serial.begin(9600);
 
+  randomSeed(analogRead(0));
+  
   servoP.attach(PIN_P);
   servoB.attach(PIN_B);
   
@@ -31,86 +34,13 @@ void setup()
  
 void loop() 
 { 
-  pattern1();
+  randNumber = random(0, 3);
+  
+  if (randNumber <= 1)
+    pattern1();
+  else if (randNumber > 1 && randNumber <= 2)
+    pattern2();
+  else
+    pattern3();
 } 
 
-void pattern1()
-{
-  posP = 1000;
-  posB = 1500;
-  
-  servoP.writeMicroseconds(posP);
-  servoB.writeMicroseconds(posB);
-  delay(15);
-
-  Serial.println("pattern1");
-
-  // 眼皮: 
-  //   - 閉 -> 半開, 慢慢張開
-  while (posP <= 1500)
-  {
-    Serial.print("P: C->M ");
-    Serial.println(posP);
-    servoP.writeMicroseconds(posP);  
-    posP += 50;
-    delay(100);
-  }
-
-  // 眼球: 
-  //   - 中 -> 右, 慢慢轉
-  //   - 右 -> 左, 快轉
-  //   - 左 -> 中, 慢慢轉
-  while (posB <= 2000)
-  {
-    Serial.print("B: M->R ");
-    Serial.println(posB);
-    servoB.writeMicroseconds(posB);  
-    posB += 50;
-    delay(100);
-  }  
-  while (posB >= 1000)
-  {
-    Serial.print("B: R->L ");
-    Serial.println(posB);
-    servoB.writeMicroseconds(posB);  
-    posB -= 150;
-    delay(30);
-  }  
-  while (posB <= 1500)
-  {
-    Serial.print("B: L->M ");
-    Serial.println(posB);
-    servoB.writeMicroseconds(posB);  
-    posB += 50;
-    delay(100);
-  } 
-
-  // 眼皮: 
-  //   - 半開 -> 全開, 慢慢張開
-  //   - 全開 -> 閉, 快快閉
-  //   - 閉 -> 全開, 快快開
-  while (posP <= 2000)
-  {
-    Serial.print("P: M->F ");
-    Serial.println(posP);
-    servoP.writeMicroseconds(posP);  
-    posP += 50;
-    delay(100);
-  }  
-  while (posP >= 1000)
-  {
-    Serial.print("P: F->C ");
-    Serial.println(posP);
-    servoP.writeMicroseconds(posP);  
-    posP -= 150;
-    delay(30);
-  }    
-  while (posP <= 2000)
-  {
-    Serial.print("P: C->F ");
-    Serial.println(posP);
-    servoP.writeMicroseconds(posP);  
-    posP += 150;
-    delay(30);
-  }     
-}
